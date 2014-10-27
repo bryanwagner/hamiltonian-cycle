@@ -62,9 +62,9 @@ public class GraphPlotPanel extends JPanel {
 	protected float             mouseX;      // the most recently tracked mouse X coordinate over the plot area
 	protected float             mouseY;      // the most recently tracked mouse X coordinate over the plot area
 	
-	protected Rectangle2D.Float rectangle;   // the Ellipse2D instance used to render the background (and other rectangles)
+	protected Rectangle2D.Float rectangle;   // the Rectangle2D instance used to render the background (and other rectangles)
 	protected Ellipse2D.Float   ellipse;     // the Ellipse2D instance used to render points
-	protected Path2D.Float      path;        // the Ellipse2D instance used to render edges
+	protected Path2D.Float      path;        // the Path2D instance used to render edges
 	
 	/**
 	 * Creates a new {@link GraphPlotPanel}.

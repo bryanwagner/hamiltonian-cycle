@@ -104,7 +104,7 @@ public class StatCounter {
 		StringBuilder builder = new StringBuilder();
 		builder.append('[').append(getClass().getName()).append(':');
 		
-		builder.append("|count=").append(count);
+		builder.append("count=").append(count);
 		builder.append("|last=").append(last);
 		builder.append("|sum=").append(sum);
 		builder.append("|max=").append(max);

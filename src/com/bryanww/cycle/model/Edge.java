@@ -2,7 +2,7 @@ package com.bryanww.cycle.model;
 
 /**
  * Basic encapsulation of two {@link Vertex}es that form an edge in a graph.
- * The edge can also be interpretted as a line segment in the Cartesian plan,
+ * The edge can also be interpretted as a line segment in the Cartesian plane,
  * and methods are provided accordingly.
  * 
  * @author  Bryan Wagner
@@ -92,7 +92,7 @@ public class Edge {
 	}
 	
 	/**
-	 * Returns the y-coordinate alone the line defined by this edge corresponding with the given x-coordinate.
+	 * Returns the y-coordinate along the line defined by this edge corresponding with the given x-coordinate.
 	 * The returned coordinate may lie away from the actual line segment of this edge.
 	 * @param x the x=coordinate to get the corresponding y-coordinate for
 	 * @return the y-coordinate alone the line defined by this edge corresponding with the given x-coordinate

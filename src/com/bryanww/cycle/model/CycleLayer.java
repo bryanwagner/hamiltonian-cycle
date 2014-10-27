@@ -4,7 +4,6 @@ package com.bryanww.cycle.model;
  * Encapsulates a layer of a {@link Cycle} with its {@link ConvexHull} layers
  * and corresponding parent and child bridge vertices.
  * 
- * 
  * @see     Cycle
  * @author  Bryan Wagner
  * @since   2014-10-25
