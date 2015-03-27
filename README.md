@@ -15,3 +15,9 @@ The general solution for finding Hamiltonian Cycles is NP-complete.  In the wors
 The naive implementation of the algorithm would perform a brute-force search to find the bridges.  However, to improve on the runtime performance, a distance heuristic is first performed which sorts candidate bridge vertices by distance from the parent hull vertices.  This heuristic takes advantage of the observation that the best bridges tend to be the shortest and that hull vertices on the opposing side of the hull are likely to intersect with the hull vertices closer to the parent bridge vertices.
 
 If the bridge heuristic fails the algorithm might fail since it does not fall back to an exhaustive search.  However, the algorithm might be still be mathematically correct; a proof would need to take advantage of Graph Theory and likely the Triangle Inequality.  The algorithm so far has been tested using the GraphPanel over a few thousand iterations (see the auto-reset function).
+
+
+Update
+======
+
+Although the existing solution does take advantage of the fact that the graph is completely connected, a new solution was brought to my attention that ignores the idea of Convex Hulls.  This idea is much more simple; shift the vertices so they're centered around the origin, then sort them in order of angles from the origin.  The angle is defined by the vector from the origin to the vertex and an arbitrary vector, in this case at (1, 0).  This algorithm is much simpler and runs in O(nlgn) time.
