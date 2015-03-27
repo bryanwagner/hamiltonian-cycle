@@ -1,6 +1,7 @@
 package com.bryanww.cycle.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,19 +16,21 @@ import java.util.List;
  * 
  * @author  Bryan Wagner
  * @since   2014-10-25
- * @version 2014-10-25
+ * @version 2015-04-27
  */
 public class Graph {
 	
-	protected List<Vertex> vertexList;  // the list of {@link Vertex}es defining the graph
-	protected Cycle        cycle;       // the {@link Cycle} that builds the Hamiltonian Cycle when the vertex list is set
+	protected List<Vertex> vertexList;        // the list of {@link Vertex}es defining the graph
+	protected Cycle        cycle;             // the {@link Cycle} that builds the Hamiltonian Cycle when the vertex list is set
+	protected List<Vertex> sortedVertexList;  // the sorted list of {@link Vertex}es defining the cycle (using the new algorithm)
 	
 	/**
 	 * Creates a new {@link Graph}.
 	 */
 	public Graph() {
-		this.vertexList = new ArrayList<Vertex>();
-		this.cycle      = new Cycle();
+		this.vertexList       = new ArrayList<Vertex>();
+		this.cycle            = new Cycle();
+		this.sortedVertexList = new ArrayList<Vertex>();
 	}
 	
 	/**
@@ -36,6 +39,52 @@ public class Graph {
 	 */
 	public List<Vertex> getVertexList() {
 		return vertexList;
+	}
+	
+	/**
+	 * Resets the sorted vertex list containing the graph cycle using the new algorithm, using the internal vertex list.
+	 * This is a O(nlgn) algorithm.
+	 */
+	protected void resetSortexVertexList() {
+		sortedVertexList.clear();
+		for (Vertex vertex : vertexList) {
+			sortedVertexList.add(new Vertex(vertex));
+		}
+		if (sortedVertexList.isEmpty()) {
+			return;
+		}
+		
+		// translate all vertexes with an offset so the origin is in the center
+		Vertex firstVertex = sortedVertexList.get(0);
+		float minX = firstVertex.getX();
+		float maxX = minX;
+		float minY = firstVertex.getY();
+		float maxY = minY;
+		for (Vertex vertex : sortedVertexList) {
+			float x = vertex.getX();
+			float y = vertex.getY();
+			if (x < minX) {
+				minX = x;
+			}
+			if (x > maxX) {
+				maxX = x;
+			}
+			if (y < minY) {
+				minY = y;
+			}
+			if (y > maxY) {
+				maxY = y;
+			}
+		}
+		float shiftX = -0.5f * (maxX - minX);
+		float shiftY = -0.5f * (maxY - minY);
+		for (Vertex vertex : sortedVertexList) {
+			vertex.addValues(shiftX, shiftY);
+		}
+		Collections.sort(sortedVertexList);
+		for (Vertex vertex : sortedVertexList) {
+			vertex.addValues(-shiftX, -shiftY);
+		}
 	}
 	
 	/**
@@ -50,6 +99,7 @@ public class Graph {
 				this.vertexList.addAll(vertexList);
 			}
 			this.cycle.setVertexList(this.vertexList);
+			resetSortexVertexList();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -63,6 +113,14 @@ public class Graph {
 	 */
 	public Cycle getCycle() {
 		return cycle;
+	}
+	
+	/**
+	 * Returns the sorted list of {@link Vertex}es defining the cycle (using the new algorithm).
+	 * @return the sorted list of {@link Vertex}es defining the cycle (using the new algorithm)
+	 */
+	public List<Vertex> getSortedVertexList() {
+		return sortedVertexList;
 	}
 	
 	/**
@@ -102,6 +160,7 @@ public class Graph {
 		
 		builder.append("vertexList=").append(vertexList);
 		builder.append("|cycle=").append(cycle);
+		builder.append("|sortedVertexList=").append(sortedVertexList);
 		
 		return builder.append(']').toString();
 	}

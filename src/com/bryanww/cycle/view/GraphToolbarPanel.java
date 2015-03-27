@@ -27,7 +27,7 @@ import javax.swing.ToolTipManager;
  * 
  * @author  Bryan Wagner
  * @since   2014-10-25
- * @version 2014-10-25
+ * @version 2015-03-27
  */
 public class GraphToolbarPanel extends JPanel {
 	
@@ -55,6 +55,7 @@ public class GraphToolbarPanel extends JPanel {
 	public static final String    AUTO_RESET_NORMAL_BUTTON_TEXT         = "normal";
 	public static final String    AUTO_RESET_SLOW_BUTTON_TEXT           = "slow";
 	public static final String    PRINT_VERTEX_BUTTON_TEXT              = "<html><u>P</u>rint</html>";
+	public static final String    DISPLAY_NEW_CYCLE_CHECK_BOX_TEXT      = "Cycle (New)";
 	public static final String    DISPLAY_CYCLE_CHECK_BOX_TEXT          = "Cycle";
 	public static final String    DISPLAY_CONVEX_HULLS_CHECK_BOX_TEXT   = "Hulls";
 	public static final String    DISPLAY_VERTICES_CHECK_BOX_TEXT       = "Vertices";
@@ -75,6 +76,7 @@ public class GraphToolbarPanel extends JPanel {
 	protected JRadioButton  autoResetSlowButton;         // the radio button to select the "slow" auto-reset speed (for testing many iterations)
 	protected JButton       printVertexListButton;       // the button to print the list of vertex coordinates to console
 	protected JToggleButton autoResetVertexListButton;   // the button to quickly automate the action of pressing the reset button (for many test iterations)
+	protected JCheckBox     displayNewCycleCheckBox;     // the checkbox controlling whether or not the cycle is displayed with the new algorithm
 	protected JCheckBox     displayCycleCheckBox;        // the checkbox controlling whether or not the cycle is displayed
 	protected JCheckBox     displayConvexHullsCheckBox;  // the checkbox controlling whether or not the convex hulls are displayed
 	protected JCheckBox     displayVerticesCheckBox;     // the checkbox controlling whether or not the vertices displayed
@@ -124,8 +126,9 @@ public class GraphToolbarPanel extends JPanel {
 		autoResetButtonGroup.add(autoResetSlowButton);
 		printVertexListButton            = new JButton(PRINT_VERTEX_BUTTON_TEXT);
 		printVertexListButton.setToolTipText(PRINT_VERTEX_BUTTON_TOOLTIP);
-		displayCycleCheckBox             = new JCheckBox(DISPLAY_CYCLE_CHECK_BOX_TEXT,        true);
-		displayConvexHullsCheckBox       = new JCheckBox(DISPLAY_CONVEX_HULLS_CHECK_BOX_TEXT, true);
+		displayNewCycleCheckBox          = new JCheckBox(DISPLAY_NEW_CYCLE_CHECK_BOX_TEXT,    true);
+		displayCycleCheckBox             = new JCheckBox(DISPLAY_CYCLE_CHECK_BOX_TEXT,        false);
+		displayConvexHullsCheckBox       = new JCheckBox(DISPLAY_CONVEX_HULLS_CHECK_BOX_TEXT, false);
 		displayVerticesCheckBox          = new JCheckBox(DISPLAY_VERTICES_CHECK_BOX_TEXT,     true);
 		displayGridCheckBox              = new JCheckBox(DISPLAY_GRID_CHECK_BOX_TEXT,         true);
 		displayCoordinatesCheckBox       = new JCheckBox(DISPLAY_COORDINATES_CHECK_BOX_TEXT,  true);
@@ -159,6 +162,8 @@ public class GraphToolbarPanel extends JPanel {
 		add(Box.createRigidArea(SPACING_SIZE));
 		add(printVertexListButton);
 		add(Box.createHorizontalGlue());
+		add(Box.createRigidArea(SPACING_SIZE));
+		add(displayNewCycleCheckBox);
 		add(Box.createRigidArea(SPACING_SIZE));
 		add(displayCycleCheckBox);
 		add(Box.createRigidArea(SPACING_SIZE));
@@ -242,6 +247,7 @@ public class GraphToolbarPanel extends JPanel {
 			}
 		};
 		
+		displayNewCycleCheckBox.addItemListener(toogleRepaintItemListener);
 		displayCycleCheckBox.addItemListener(toogleRepaintItemListener);
 		displayConvexHullsCheckBox.addItemListener(toogleRepaintItemListener);
 		displayVerticesCheckBox.addItemListener(toogleRepaintItemListener);
@@ -280,6 +286,14 @@ public class GraphToolbarPanel extends JPanel {
 			e.printStackTrace();
 		}
 		graphPanel.getGraphPlotPanel().repaint();
+	}
+	
+	/**
+	 * Returns {@code true} if the cycle is displayed (with the new algorithm).
+	 * @return {@code true} if the cycle is displayed (with the new algorithm)
+	 */
+	public boolean isDisplayingNewCycle() {
+		return displayNewCycleCheckBox.isSelected();
 	}
 	
 	/**

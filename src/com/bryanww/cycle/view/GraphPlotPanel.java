@@ -29,7 +29,7 @@ import com.bryanww.cycle.model.Vertex;
  * 
  * @author  Bryan Wagner
  * @since   2014-10-25
- * @version 2014-10-25
+ * @version 2015-04-27
  */
 public class GraphPlotPanel extends JPanel {
 	
@@ -48,13 +48,15 @@ public class GraphPlotPanel extends JPanel {
 	public static final Color  DARK_GRID_COLOR         = Color.DARK_GRAY;
 	public static final Color  DARK_VERTEX_COLOR       = Color.CYAN;
 	public static final Color  DARK_CONVEX_HULL_COLOR  = new Color(96, 96, 96);
-	public static final Color  DARK_CYCLE_COLOR        = new Color(0, 255, 0);
+	public static final Color  DARK_NEW_CYCLE_COLOR    = new Color(0, 255, 0);
+	public static final Color  DARK_CYCLE_COLOR        = new Color(255, 0, 0);
 	public static final Color  DARK_COORDINATE_COLOR   = Color.WHITE;
 	public static final Color  LIGHT_BACKGROUND_COLOR  = Color.WHITE;
 	public static final Color  LIGHT_GRID_COLOR        = Color.LIGHT_GRAY;
 	public static final Color  LIGHT_VERTEX_COLOR      = Color.BLUE;
 	public static final Color  LIGHT_CONVEX_HULL_COLOR = new Color(160, 160, 160);
-	public static final Color  LIGHT_CYCLE_COLOR       = new Color(128, 0, 0);
+	public static final Color  LIGHT_NEW_CYCLE_COLOR   = new Color(128, 0, 0);
+	public static final Color  LIGHT_CYCLE_COLOR       = new Color(0, 128, 0);
 	public static final Color  LIGHT_COORDINATE_COLOR  = Color.BLACK;
 	
 	protected GraphPanel        graphPanel;  // the reference to the parent {@link GraphPanel}
@@ -242,29 +244,51 @@ public class GraphPlotPanel extends JPanel {
 	
 	/**
 	 * Renders the {@link Cycle} path of the {@link Graph}.
+	 * @param g2d             the {@link Graphics2D} reference
+	 * @param color           the cycle line color
+	 * @param cycleVertexList the sorted list of cycle {@link Vertex}es
+	 */
+	protected void drawCycle(Graphics2D g2d, Color color, List<Vertex> cycleVertexList) {
+		g2d.setColor(color);
+		g2d.setStroke(SOLID_STROKE);
+		
+		path.reset();
+		if (cycleVertexList.isEmpty()) {
+			return;
+		}
+		
+		Vertex lastVertex = cycleVertexList.get(cycleVertexList.size() - 1);
+		path.moveTo(getDisplayX(lastVertex), getDisplayY(lastVertex));
+		for (Vertex vertex : cycleVertexList) {
+			path.lineTo(getDisplayX(vertex), getDisplayY(vertex));
+		}
+		g2d.draw(path);
+	}
+	
+	/**
+	 * Renders the {@link Cycle} path of the {@link Graph}.
 	 * @param g2d the {@link Graphics2D} reference
 	 */
 	protected void drawCycle(Graphics2D g2d) {
 		if (graphPanel.getGraphToolbarPanel().isDisplayingCycle()) {
-			Graph graph = graphPanel.getGraph();
-			Cycle cycle = graph.getCycle();
-			
-			Color color = graphPanel.getGraphToolbarPanel().isDisplayingDark() ? DARK_CYCLE_COLOR : LIGHT_CYCLE_COLOR;
-			g2d.setColor(color);
-			g2d.setStroke(SOLID_STROKE);
-			
-			path.reset();
+			Color        color           = graphPanel.getGraphToolbarPanel().isDisplayingDark() ? DARK_CYCLE_COLOR : LIGHT_CYCLE_COLOR;
+			Graph        graph           = graphPanel.getGraph();
+			Cycle        cycle           = graph.getCycle();
 			List<Vertex> cycleVertexList = cycle.getCycleVertexList();
-			if (cycleVertexList.isEmpty()) {
-				return;
-			}
-			
-			Vertex lastVertex = cycleVertexList.get(cycleVertexList.size() - 1);
-			path.moveTo(getDisplayX(lastVertex), getDisplayY(lastVertex));
-			for (Vertex vertex : cycleVertexList) {
-				path.lineTo(getDisplayX(vertex), getDisplayY(vertex));
-			}
-			g2d.draw(path);
+			drawCycle(g2d, color, cycleVertexList);
+		}
+	}
+	
+	/**
+	 * Renders the {@link Graph} cycle using the newer, simpler algorithm.
+	 * @param g2d the {@link Graphics2D} reference
+	 */
+	protected void drawCycleWithNewAlgorithm(Graphics2D g2d) {
+		if (graphPanel.getGraphToolbarPanel().isDisplayingNewCycle()) {
+			Color        color           = graphPanel.getGraphToolbarPanel().isDisplayingDark() ? DARK_NEW_CYCLE_COLOR : LIGHT_NEW_CYCLE_COLOR;
+			Graph        graph           = graphPanel.getGraph();
+			List<Vertex> cycleVertexList = graph.getSortedVertexList();
+			drawCycle(g2d, color, cycleVertexList);
 		}
 	}
 	
@@ -295,6 +319,7 @@ public class GraphPlotPanel extends JPanel {
 			drawVertices(g2d);
 			drawConvexHulls(g2d);
 			drawCycle(g2d);
+			drawCycleWithNewAlgorithm(g2d);
 			drawCoordinates(g2d);
 		}
 		catch (Exception e) {

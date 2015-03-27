@@ -6,11 +6,12 @@ package com.bryanww.cycle.model;
  * 
  * @author  Bryan Wagner
  * @since   2014-10-25
- * @version 2014-10-25
+ * @version 2015-04-27
  */
-public class Vertex {
+public class Vertex implements Comparable<Vertex> {
 	
-	public static final float PRECISION = 1e-5f;  // the precision used for floating point comparison
+	public static final float  PRECISION          = 1e-5f;  // the precision used for floating point comparison
+	public static final double RADIANS_TO_DEGREES = 180.0 / Math.PI;
 	
 	protected float x;  // the x-coordinate
 	protected float y;  // the y-coordinate
@@ -28,6 +29,15 @@ public class Vertex {
 	public Vertex(float x, float y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	/**
+	 * Creates a new {@link Vertex}.
+	 * @param vertex the {@link Vertex} to copy
+	 */
+	public Vertex(Vertex vertex) {
+		this.x = vertex.x;
+		this.y = vertex.y;
 	}
 	
 	/**
@@ -73,6 +83,16 @@ public class Vertex {
 	}
 	
 	/**
+	 * Adds to both the x-coordinate and the y-coordinate.
+	 * @param addX the x value to add
+	 * @param addY the y value to add
+	 */
+	public void addValues(float addX, float addY) {
+		this.x += addX;
+		this.y += addY;
+	}
+	
+	/**
 	 * Returns the distance between this vertex and the given vertex.
 	 * @param otherVertex the other vertex to calculate the distance from
 	 * @return the distance between this vertex and the given vertex
@@ -114,6 +134,24 @@ public class Vertex {
 		
 		// positive if counter-clockwise; allow zero
 		return z <= 0.0f;
+	}
+	
+	public static double calculateAngleOfRotation(Vertex a) {
+		double bx         = 1.0;
+		double by         = 0.0;
+		double dotProduct = a.x * bx + a.y * by;
+		double aMagnitude = Math.sqrt(a.x * a.x + a.y * a.y);
+		double bMagnitude = Math.sqrt(bx * bx + by * by);
+		double divisor    = aMagnitude * bMagnitude;
+		double angle      = Math.acos(divisor == 0.0 ? 0.0 : (dotProduct / divisor));
+		return a.y < 0.0f ? (2.0 * Math.PI - angle) : angle;
+	}
+	
+	@Override
+	public int compareTo(Vertex other) {
+		double thisAngle = calculateAngleOfRotation(this);
+		double otherAngle = calculateAngleOfRotation(other);
+		return thisAngle < otherAngle ? -1 : (thisAngle > otherAngle ? 1 : 0);
 	}
 	
 	@Override
@@ -162,5 +200,17 @@ public class Vertex {
 		b.setValues(0.0f, 0.4f);
 		c.setValues(0.2f, 0.6f);
 		System.out.println(isClockwise(a, b, c));  // true
+		
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(a));
+		System.out.println();
+		
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(1.0f, 0.0f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(0.5f, 0.5f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(0.0f, 1.0f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(-0.5f, 0.5f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(-1.0f, 0.0f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(-0.5f, -0.5f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(0.0f, -1.0f)));
+		System.out.println(RADIANS_TO_DEGREES * calculateAngleOfRotation(new Vertex(0.5f, -0.5f)));
 	}
 }
