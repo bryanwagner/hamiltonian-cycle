@@ -5,6 +5,8 @@ Visualization of an algorithm to find a Hamiltonian Cycle of a completely connec
 
 Run:  com.bryanww.cycle.Main
 
+Screenshot - Old Implementation with Convex Hulls
+![screenshot-old.png](screenshot-old.png "Screenshot - Old Implementation with Convex Hulls")
 
 The original problem statement:
 "You are given a point set embedding. Obviously, any path is planar in the sense that such an embedding exists. You have to find a path in the given embedding. But actually, you should find a hamiltonian cycle. A path is a good start though.
@@ -20,4 +22,10 @@ If the bridge heuristic fails the algorithm might fail since it does not fall ba
 Update
 ======
 
+Screenshot - New Implementation with Star Algorithm
+![screenshot-new.png](screenshot-new.png "Screenshot - New Implementation with Star Algorithm")
+
 Although the existing solution does take advantage of the fact that the graph is completely connected, a new solution was brought to my attention that ignores the idea of Convex Hulls.  This idea is much more simple; shift the vertices so they're centered around the origin, then sort them in order of angles from the origin.  The angle is defined by the vector from the origin to the vertex and an arbitrary vector, in this case at (1, 0).  This algorithm is much simpler and runs in O(nlgn) time.
+
+Here's a comparison of the two approaches:
+![screenshot-comparison.png](screenshot-comparison.png "Comparison of the two approaches.")
